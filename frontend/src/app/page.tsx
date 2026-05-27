@@ -23,7 +23,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 // API Server Address
-const API_BASE = 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Curated Unsplash images sorted by cuisine categories for beautiful cards
 const cuisineImages: Record<string, string[]> = {
