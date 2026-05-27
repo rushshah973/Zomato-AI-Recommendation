@@ -54,7 +54,7 @@ class Settings(BaseSettings):
 
   # Cache
   data_cache_path: Path = Field(
-    default=Path(".cache/restaurants.parquet"), alias="DATA_CACHE_PATH"
+    default=Path("app/data/restaurants.parquet"), alias="DATA_CACHE_PATH"
   )
 
   @field_validator("budget_medium_max")

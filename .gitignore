@@ -37,3 +37,6 @@ node_modules/
 frontend/.next/
 frontend/node_modules/
 
+# Allow preprocessed database cache in app/data
+!app/data/restaurants.parquet
+
