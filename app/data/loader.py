@@ -61,6 +61,10 @@ class RestaurantStore:
     self._restaurants: Optional[list[Restaurant]] = None
 
   def _cache_path(self) -> Path:
+    # Check if cache file exists relative to this file's folder (app/data/)
+    local_path = Path(__file__).resolve().parent / "restaurants.parquet"
+    if local_path.exists():
+      return local_path
     return Path(settings.data_cache_path)
 
   def _sanitize_record(self, record: dict[str, Any]) -> dict[str, Any]:
