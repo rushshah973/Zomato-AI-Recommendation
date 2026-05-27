@@ -22,8 +22,11 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// API Server Address
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// API Server Address with defensive protocol check
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = (rawApiUrl.startsWith('http://') || rawApiUrl.startsWith('https://'))
+  ? rawApiUrl
+  : `https://${rawApiUrl}`;
 
 // Curated Unsplash images sorted by cuisine categories for beautiful cards
 const cuisineImages: Record<string, string[]> = {
