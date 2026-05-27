@@ -30,13 +30,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load dataset once at startup
-try:
-    all_restaurants = get_restaurants()
-    logger.info("Successfully preloaded %d restaurants.", len(all_restaurants))
-except Exception as e:
-    logger.exception("Failed to load Zomato dataset on startup.")
-    all_restaurants = []
+# Defer dataset load to a lazy helper to avoid blocking container health checks on start
+_all_restaurants = None
+
+def get_all_restaurants():
+    global _all_restaurants
+    if _all_restaurants is None:
+        try:
+            _all_restaurants = get_restaurants()
+            logger.info("Successfully loaded %d restaurants.", len(_all_restaurants))
+        except Exception as e:
+            logger.exception("Failed to load Zomato dataset.")
+            _all_restaurants = []
+    return _all_restaurants
 
 
 class RecommendationsRequest(BaseModel):
@@ -53,11 +59,12 @@ class RecommendationsRequest(BaseModel):
 def get_options():
     """Extract distinct locations and cuisines for dropdown autocomplete fields."""
     try:
-        cities = PreferenceService.distinct_cities(all_restaurants)
+        restaurants = get_all_restaurants()
+        cities = PreferenceService.distinct_cities(restaurants)
         clean_cities = [c for c in cities if c and len(c.strip()) > 1]
 
         cuisine_counter = Counter()
-        for r in all_restaurants:
+        for r in restaurants:
             cuisine_counter.update(r.cuisines)
         clean_cuisines = [
             cuisine for cuisine, _ in cuisine_counter.most_common(100) if cuisine
@@ -66,11 +73,12 @@ def get_options():
         return {
             "cities": clean_cities,
             "cuisines": clean_cuisines,
-            "total_records": len(all_restaurants),
+            "total_records": len(restaurants),
         }
     except Exception as e:
         logger.exception("Failed to extract filter options.")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 @app.post("/api/recommendations")
