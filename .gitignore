@@ -1,0 +1,39 @@
+# Environment and secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Data and cache
+.cache/
+*.parquet
+
+# IDE and OS
+.idea/
+.vscode/
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node and Next.js
+node_modules/
+.node/
+.next/
+frontend/.next/
+frontend/node_modules/
+
