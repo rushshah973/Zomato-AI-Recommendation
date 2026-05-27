@@ -17,9 +17,17 @@ from config.settings import settings
 
 logger = logging.getLogger(__name__)
 
-# Keep Hugging Face cache inside the project for portability and sandbox-friendly runs.
-_HF_CACHE = Path(".cache/huggingface")
-_HF_CACHE.mkdir(parents=True, exist_ok=True)
+# Keep Hugging Face cache inside the project for portability, falling back to /tmp if read-only
+try:
+    _HF_CACHE = Path(".cache/huggingface")
+    _HF_CACHE.mkdir(parents=True, exist_ok=True)
+except Exception:
+    try:
+        _HF_CACHE = Path("/tmp/huggingface")
+        _HF_CACHE.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        _HF_CACHE = Path(".")
+
 _hf_cache_resolved = str(_HF_CACHE.resolve())
 os.environ["HF_HOME"] = _hf_cache_resolved
 os.environ["HF_HUB_CACHE"] = str((_HF_CACHE / "hub").resolve())
