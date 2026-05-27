@@ -223,7 +223,7 @@ export default function Home() {
       setTotalRecords(data.total_records || 0);
     } catch (err: any) {
       console.error(err);
-      setApiError("Could not connect to FastAPI server. Please make sure it is running at port 8000.");
+      setApiError(`Could not connect to FastAPI server at ${API_BASE}. Please make sure it is active.`);
     } finally {
       setOptionsLoading(false);
     }
